@@ -94,6 +94,14 @@
       "description": "Indicates whether or not to generate the example files from the example sections of the models. Defaults to false.",
       "type": "boolean",
       "default": "false"
+    },
+    "operationNamingStyle": {
+      "description": "Naming style for operationId. Default value is 'none'",
+      "type": "string",
+      "enum": [
+        "none", "camelCase", "CamelCase"
+      ],
+      "default": "none"
     }
   }
 }

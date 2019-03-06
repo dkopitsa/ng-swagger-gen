@@ -956,11 +956,31 @@ function tagName(tag, options) {
   return tag.charAt(0).toUpperCase() + (tag.length == 1 ? '' : tag.substr(1));
 }
 
+
+/**
+ * Format name accorging to given naming style. Supports CamelCase and camelCase (lowercase of first letter).
+ * Input name can be in camelCase, CamelCase, KebabCase (the-quick-brown-fox) or SnakeCase ('the_quick_brown_fox')
+ */
+function formatNamingStyle(name, style) {
+  if (style===undefined || style === 'none') {
+    // Leave name as-is
+    return name
+  }
+
+  name = name.replace(/([_-]\w)/g, function(m) { return m[1].toUpperCase(); });
+
+  if (style === 'camelCase') {
+      name = name.charAt(0).toLowerCase() + name.substring(1);
+  }
+
+  return name;
+}
+
 /**
  * Returns the actual operation id, assuming the one given.
  * If none is given, generates one
  */
-function operationId(given, method, url, allKnown) {
+function operationId(given, method, url, allKnown, namingStyle) {
   var id;
   var generate = given == null;
   if (generate) {
@@ -968,6 +988,7 @@ function operationId(given, method, url, allKnown) {
   } else {
     id = toIdentifier(given);
   }
+  id = formatNamingStyle(id, namingStyle);
   var duplicated = allKnown.has(id);
   if (duplicated) {
     var i = 1;
@@ -1040,7 +1061,8 @@ function processServices(swagger, models, options) {
         def.operationId,
         method,
         url,
-        descriptor.operationIds
+        descriptor.operationIds,
+        options.operationNamingStyle
       );
 
       var parameters = def.parameters || [];
